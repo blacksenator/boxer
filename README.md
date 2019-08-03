@@ -1,7 +1,7 @@
 # An access base for AVM FRITZ!Box
 
 A platform to test different ways to access, get and post data from/to the FRITZ!Box with http requests.
-
+The base is the API from [andig](https://github.com/andig/carddav2fb/blob/master/src/FritzBox/Api.php), which has been extended by a few routines.
 The example code shows how to change the kid protection filter of a designated device.
 
 ## Requirements
@@ -27,4 +27,4 @@ edit `config.example.php` and save as `config.php`
 This script is released under MIT license.
 
 ## Author
-Copyright (c) 2019 Volker Püschel
+Copyright (c) 2019 Volker Püschel, Andreas Götz

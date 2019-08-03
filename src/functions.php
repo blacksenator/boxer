@@ -3,15 +3,21 @@
 namespace blacksenator;
 
 //use blacksenator\fritzsoap\fritzsoap;
-use blacksenator\FritzBox\Api;
+
 use \SimpleXMLElement;
 use \DOMDocument;
 use \DOMXPath;
+use blacksenator\FritzBox\Api;
+use blacksenator\fbvalidateurl\fbvalidateurl;
 
 function routerAccess($config)
 {
+    // validate FRITZ!Box adress
+    $validator = new fbvalidateurl;
+    $url = $validator->getValidURL($config['url']);
+
     // login
-    $fritz = new Api($config['url']);
+    $fritz = new Api($url['scheme'] . '://' . $url['host']);
     $fritz->setAuth($config['user'], $config['password']);
     $fritz->mergeClientOptions($config['http'] ?? []);
     $fritz->login();

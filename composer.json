@@ -13,7 +13,8 @@
         "php": "^7.0",
         "symfony/console": "^3.0",
         "guzzlehttp/guzzle": "^6.0",
-        "ringcentral/psr7": "^1.2"
+        "ringcentral/psr7": "^1.2",
+        "blacksenator/fbvalidateurl": "^1.1"
     },
     "autoload": {
         "psr-4": {
