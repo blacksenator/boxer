@@ -2,15 +2,14 @@
 
 namespace blacksenator;
 
-//use blacksenator\fritzsoap\fritzsoap;
-
 use \SimpleXMLElement;
 use \DOMDocument;
 use \DOMXPath;
 use blacksenator\FritzBox\Api;
 use blacksenator\fbvalidateurl\fbvalidateurl;
+use blacksenator\fritzsoap\fritzsoap;
 
-function routerAccess($config)
+function getRouterAccess($config)
 {
     // validate FRITZ!Box adress
     $validator = new fbvalidateurl;
@@ -22,14 +21,38 @@ function routerAccess($config)
     $fritz->mergeClientOptions($config['http'] ?? []);
     $fritz->login();
 
-    // get request (fetching data)
-    $response = $fritz->getData('/internet/kids_userlist.lua');
+    return $fritz;
+}
 
-    // convert html response into SimpleXML
+/**
+ * converting the HTML response into a SimpleXMLElement
+ *
+ * @param string $response
+ * @return SimpleXMLElement $xmlSite
+ */
+function convertHTMLtoXML($response)
+{
     $dom = new DOMDocument();
     $dom->preserveWhiteSpace = false;
     $dom->loadHTML($response);
     $xmlSite = simplexml_import_dom($dom);
+
+    return $xmlSite;
+}
+
+/**
+ * set new filter to designated device
+ *
+ * @param array $config
+ */
+function setKidsFilter($config)
+{
+    $fritz = getRouterAccess($config);
+    // get request (fetching data)
+    $response = $fritz->getData('/internet/kids_userlist.lua');
+
+    // convert html response into SimpleXML
+    $xmlSite = convertHTMLtoXML($response);
 
     // delete comment for debugging
     // $xmlSite->asXML('site_GET.xml');
@@ -95,4 +118,28 @@ function routerAccess($config)
     $xmlSite = simplexml_import_dom($dom);
     $xmlSite->asXML('site_POST.xml');
     */
+}
+
+function getMeshList($config)
+{
+    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+    /* delete comment to get the example of service list:
+    $services = $fritzbox->getServiceDescription();
+    $services->asXML('services.xml'); */
+
+    $fritzbox->getClient('hosts');
+    $meshList = $fritzbox->getMeshListPath();
+
+    // delete comments for debugging
+    // $meshList->asXML('meshlist.xml');
+
+    $nodeIntfs = $meshList->xpath("//node_interfaces/*[starts-with(local-name(), 'item')]");
+    foreach ($nodeIntfs as $nodeIntf) {
+        if ((string)$nodeIntf->name == $config['connection']) {
+            $result = (string)$nodeIntf->mac_address;
+            break;
+        }
+    }
+
+    return $result;
 }

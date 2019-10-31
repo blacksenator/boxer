@@ -22,6 +22,11 @@ class RunCommand extends Command
     {
         $this->loadConfig($input);
         error_log('Starting FRITZ!Box access...');
-        routerAccess($this->config);
+
+        // test: setting kids filters (uncomment for testing access to /internet/kids_userlist.lua)
+        // setKidsFilter($this->config);
+
+        // test: getting MAC from device connected to designated LAN port
+        echo getMeshList($this->config);
     }
 }

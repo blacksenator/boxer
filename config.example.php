@@ -7,6 +7,9 @@ $config = [
     'http' => [                 // http client options are directly passed to Guzzle http client
         // 'verify' => false,   // uncomment to disable certificate check
     ],
+    // test setting kids filter
     'device'       => '',       // the label of your desired device e.g. 'Bens-iPhone'
     'filter'       => 'Unbeschränkt',       // e.g. 'Kinder' (the label of your desired filter)
+    // test setting mesh list
+    'connection'   => 'LAN:2',
 ];
