@@ -51,7 +51,7 @@ class Api
     }
 
     /**
-     * get data from FRITZ!Box.
+     * get data from FRITZ!Box websites
      * http://docs.guzzlephp.org/en/stable/quickstart.html#query-string-parameters
      * specified the query by using the query request option as an array
      *
@@ -59,12 +59,13 @@ class Api
      * @return string GET response
      * @throws \Exception
      */
-    public function getData($path)
+    public function getData($path, array $define = null)
     {
         $url = $this->url . $path;
         $params = [
             'query' => [
                 'sid' => $this->sid,
+                $define,
             ]
         ];
         $resp = $this->getClient()->request('GET', $url, $params);

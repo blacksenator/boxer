@@ -34,10 +34,47 @@ function convertHTMLtoXML($response)
 {
     $dom = new DOMDocument();
     $dom->preserveWhiteSpace = false;
-    $dom->loadHTML($response);
+    @$dom->loadHTML($response);
     $xmlSite = simplexml_import_dom($dom);
 
     return $xmlSite;
+}
+
+/**
+ * get a list of phone numbers of
+ * optional type = 'in', 'out', 'fail', 'rejected'; default all
+ *
+ * @param array $config
+ * @param string $type
+ * @return array $numbers
+ */
+
+function getCallList($config, string $type = '')
+{
+    $fritz = getRouterAccess($config);
+    // get request (fetching data)
+    $response = $fritz->getData('/fon_num/foncalls_list.lua');
+    // convert html response into SimpleXML
+    $xmlSite = convertHTMLtoXML($response);
+    switch ($type) {
+        case 'in':
+        case 'out':
+        case 'fail':
+        case 'rejected':
+            $queryStr = sprintf('//tr[@class="showif_%s"]/td/@title', $type);
+            break;
+        default:
+            $queryStr = '//tr/td/@title';
+    }
+    $rows = $xmlSite->xpath($queryStr);
+    $calls =[];
+    foreach ($rows as $row) {
+        if (preg_match('/(?<= = )(?<number>.*?)$/',  $row->title, $matches)) {
+            $calls[] = $matches['number'];
+        }
+    }
+
+    return $calls;
 }
 
 /**
@@ -66,7 +103,7 @@ function setKidsFilter($config)
     $rows = $xmlSite->xpath('//tr/td[@title=@datalabel]');  // these are the rows with assignments of devices to filters
     foreach ($rows as $row) {
         $key = utf8_decode((string)$row->attributes()['title']);    // name (label) of the devices
-        if (preg_match('/Alle /', $key)) {                          // skip standard settings
+        if (strpos($key, 'Alle ') !== false) {                      // skip standard settings
             continue;
         }
         $select = $row->xpath('parent::*//select[@name]');  // find the line with the currently assigned ID for the device
@@ -123,9 +160,9 @@ function setKidsFilter($config)
 function getMeshList($config)
 {
     $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
-    /* delete comment to get the example of service list:
+    // delete comment to get the example of service list:
     $services = $fritzbox->getServiceDescription();
-    $services->asXML('services.xml'); */
+    $services->asXML('services.xml');
 
     $fritzbox->getClient('hosts');
     $meshList = $fritzbox->getMeshListPath();
@@ -142,4 +179,37 @@ function getMeshList($config)
     }
 
     return $result;
+}
+
+function getFileLinkList($config)
+{
+    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+
+    $fritzbox->getClient('x_filelinks');
+    $fileLinkList = $fritzbox->getFileLinkListPath();
+
+    // delete comments for debugging
+    file_put_contents('FileLinkList.xml', $fileLinkList);
+    /*
+    $nodeIntfs = $meshList->xpath("//node_interfaces/*[starts-with(local-name(), 'item')]");
+    foreach ($nodeIntfs as $nodeIntf) {
+        if ((string)$nodeIntf->name == $config['connection']) {
+            $result = (string)$nodeIntf->mac_address;
+            break;
+        }
+    }
+
+    return $result;
+    */
+}
+
+function getStorageInfo($config)
+{
+    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+
+    $fritzbox->getClient('x_storage');
+
+    $storageInfo = $fritzbox->getInfo(['NewIndex' => 0]);
+
+    print_r($storageInfo);
 }

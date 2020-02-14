@@ -27,6 +27,15 @@ class RunCommand extends Command
         // setKidsFilter($this->config);
 
         // test: getting MAC from device connected to designated LAN port
-        echo getMeshList($this->config);
+        // echo getMeshList($this->config);
+
+        // test: get the call list (in, out, rejected, fail or all)
+        // print_r(getCallList($this->config, 'in'));
+
+        // test: getting MAC from device connected to designated LAN port
+        // getFileLinkList($this->config);
+
+        // test: ftp availability
+        getStorageInfo($this->config);
     }
 }
