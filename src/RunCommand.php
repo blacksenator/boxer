@@ -30,12 +30,22 @@ class RunCommand extends Command
         // echo getMeshList($this->config);
 
         // test: get the call list (in, out, rejected, fail or all)
-        // print_r(getCallList($this->config, 'in'));
+        // print_r(getCallList_LUA($this->config, 'in'));
 
-        // test: getting MAC from device connected to designated LAN port
+        // test: get the call list (SOAP)
+        // getCallList($this->config);
+
+        // test: getting MAC from device connected to designated LAN port (SOAP)
         // getFileLinkList($this->config);
 
         // test: ftp availability
         getStorageInfo($this->config);
+
+        // test: get TelTarif CallByCall image
+        // getCallByCall();
+
+        // getVoipInfo($this->config);
+
+        // assambleClasses($this->config);
     }
 }

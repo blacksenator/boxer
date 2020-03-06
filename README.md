@@ -6,8 +6,8 @@ The example code shows how to change the kid protection filter of a designated d
 
 ## Requirements
 
-  * PHP >7.0 (`apt-get install php php-curl php-mbstring php-xml`)
-  * Composer (follow the installation guide at https://getcomposer.org/download/)
+* PHP ≥7.0 (`apt-get install php php-curl php-mbstring php-xml`)
+* Composer (follow the installation guide at <https://getcomposer.org/download/)
 
 ## Installation
 
@@ -24,7 +24,9 @@ edit `config.example.php` and save as `config.php`
     php boxer run
 
 ## License
+
 This script is released under MIT license.
 
 ## Author
+
 Copyright (c) 2019 Volker Püschel, Andreas Götz

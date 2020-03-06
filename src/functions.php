@@ -4,10 +4,15 @@ namespace blacksenator;
 
 use \SimpleXMLElement;
 use \DOMDocument;
-use \DOMXPath;
 use blacksenator\FritzBox\Api;
 use blacksenator\fbvalidateurl\fbvalidateurl;
+use blacksenator\fritzsoap\classgenerator;
 use blacksenator\fritzsoap\fritzsoap;
+use blacksenator\fritzsoap\x_contact;
+use blacksenator\fritzsoap\x_voip;
+use blacksenator\fritzsoap\hosts;
+use blacksenator\fritzsoap\x_storage;
+use blacksenator\fritzsoap\x_filelinks;
 
 function getRouterAccess($config)
 {
@@ -49,7 +54,7 @@ function convertHTMLtoXML($response)
  * @return array $numbers
  */
 
-function getCallList($config, string $type = '')
+function getCallList_LUA($config, string $type = '')
 {
     $fritz = getRouterAccess($config);
     // get request (fetching data)
@@ -75,6 +80,17 @@ function getCallList($config, string $type = '')
     }
 
     return $calls;
+}
+
+function getCallList($config)
+{
+    $fritzbox = new x_contact($config['url'], $config['user'], $config['password']);
+
+    $fritzbox->getClient();
+    $callList = $fritzbox->getCallList();
+
+    // delete comments for debugging
+    file_put_contents('callList.xml', $callList);
 }
 
 /**
@@ -159,12 +175,12 @@ function setKidsFilter($config)
 
 function getMeshList($config)
 {
-    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+    $fritzbox = new hosts($config['url'], $config['user'], $config['password']);
     // delete comment to get the example of service list:
-    $services = $fritzbox->getServiceDescription();
-    $services->asXML('services.xml');
+     $services = $fritzbox->getServiceDescription();
+     $services->asXML('services.xml');
 
-    $fritzbox->getClient('hosts');
+    $fritzbox->getClient();
     $meshList = $fritzbox->getMeshListPath();
 
     // delete comments for debugging
@@ -183,33 +199,46 @@ function getMeshList($config)
 
 function getFileLinkList($config)
 {
-    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+    $fritzbox = new x_filelinks($config['url'], $config['user'], $config['password']);
 
-    $fritzbox->getClient('x_filelinks');
+    $fritzbox->getClient();
     $fileLinkList = $fritzbox->getFileLinkListPath();
-
-    // delete comments for debugging
     file_put_contents('FileLinkList.xml', $fileLinkList);
-    /*
-    $nodeIntfs = $meshList->xpath("//node_interfaces/*[starts-with(local-name(), 'item')]");
-    foreach ($nodeIntfs as $nodeIntf) {
-        if ((string)$nodeIntf->name == $config['connection']) {
-            $result = (string)$nodeIntf->mac_address;
-            break;
-        }
-    }
-
-    return $result;
-    */
 }
 
 function getStorageInfo($config)
 {
-    $fritzbox = new fritzsoap($config['url'], $config['user'], $config['password']);
+    $fritzbox = new x_storage($config['url'], $config['user'], $config['password']);
 
-    $fritzbox->getClient('x_storage');
-
-    $storageInfo = $fritzbox->getInfo(['NewIndex' => 0]);
+    $fritzbox->getClient();
+    $storageInfo = $fritzbox->getInfo();
 
     print_r($storageInfo);
+}
+
+function getVoipInfo($config)
+{
+    $fritzbox = new x_voip($config['url'], $config['user'], $config['password']);
+
+    $fritzbox->getClient();
+    $storageInfo = $fritzbox->getInfo();
+
+    print_r($storageInfo);
+}
+
+function getCallByCall()
+{
+    $image = file_get_contents('https://www.teltarif.de/db/blitz.gif?bg=FFFFFF&cell=F0EEE6&head=006EC0&link=3F464C&text=80B7E0&padding=10&ziel=Mobilfunk%2cNiederlande%2cKanada&takt=61&ve=1&019x=0&width=240&height=196');
+
+    file_put_contents('Image.gif', $image);
+}
+
+function assambleClasses($config)
+{
+    $fritzbox = new classgenerator($config['url'], $config['user'], $config['password']);
+    /*
+    $services = $fritzbox->getServiceDescription();
+    $services->asXML('services.xml');
+    */
+    $fritzbox->getClasses();
 }

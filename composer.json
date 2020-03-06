@@ -14,7 +14,7 @@
         "symfony/console": "^3.0",
         "guzzlehttp/guzzle": "^6.0",
         "ringcentral/psr7": "^1.2",
-        "blacksenator/fritzsoap": "^1.0"
+        "blacksenator/fritzsoap": "^2.1"
     },
     "autoload": {
         "psr-4": {
