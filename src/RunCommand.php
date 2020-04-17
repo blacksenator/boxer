@@ -20,7 +20,9 @@ class RunCommand extends Command
             ->addOption('3', '3', InputOption::VALUE_NONE, 'test get call list')
             ->addOption('4', '4', InputOption::VALUE_NONE, 'test get call list (SOAP)')
             ->addOption('5', '5', InputOption::VALUE_NONE, 'test get file link list (SOAP)')
-            ->addOption('6', '6', InputOption::VALUE_NONE, 'test get ftp availability');
+            ->addOption('6', '6', InputOption::VALUE_NONE, 'test get ftp availability')
+            ->addOption('7', '7', InputOption::VALUE_NONE, 'test get net devices')
+            ->addOption('8', '8', InputOption::VALUE_NONE, 'test get voip info');
 
         $this->addConfig();
     }
@@ -60,11 +62,14 @@ class RunCommand extends Command
             getStorageInfo($this->config);
         }
 
-        // test: get TelTarif CallByCall image
-        // getCallByCall();
+        // test: get net devices
+        if ($input->getOption('7')) {
+            getNetDevices($this->config);
+        }
 
-        // getVoipInfo($this->config);
-
-        // assambleClasses($this->config);
+        // test: get net devices
+        if ($input->getOption('8')) {
+            getVoipInfo($this->config);
+        }
     }
 }

@@ -92,6 +92,15 @@ function getCallList($config)
     file_put_contents('callList.xml', $callList);
 }
 
+function getNetDevices($config)
+{
+    $fritz = getRouterAccess($config);
+    // get request (fetching data)
+    $response = $fritz->getData('/net/network.lua');
+    $xmlSite = convertHTMLtoXML($response);
+    $xmlSite->asXML('network.xml');
+}
+
 /**
  * set new filter to designated device
  *
@@ -107,7 +116,7 @@ function setKidsFilter($config)
     $xmlSite = convertHTMLtoXML($response);
 
     // delete comment for debugging
-    // $xmlSite->asXML('site_GET.xml');
+    $xmlSite->asXML('kids_userlist.xml');
 
     // initialize processing values
     $devices = [];
@@ -223,21 +232,4 @@ function getVoipInfo($config)
     $storageInfo = $fritzbox->getInfo();
 
     print_r($storageInfo);
-}
-
-function getCallByCall()
-{
-    $image = file_get_contents('https://www.teltarif.de/db/blitz.gif?bg=FFFFFF&cell=F0EEE6&head=006EC0&link=3F464C&text=80B7E0&padding=10&ziel=Mobilfunk%2cNiederlande%2cKanada&takt=61&ve=1&019x=0&width=240&height=196');
-
-    file_put_contents('Image.gif', $image);
-}
-
-function assambleClasses($config)
-{
-    $fritzbox = new classgenerator($config['url'], $config['user'], $config['password']);
-    /*
-    $services = $fritzbox->getServiceDescription();
-    $services->asXML('services.xml');
-    */
-    $fritzbox->getClasses();
 }

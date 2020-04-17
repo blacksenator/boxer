@@ -59,14 +59,12 @@ class Api
      * @return string GET response
      * @throws \Exception
      */
-    public function getData($path, array $define = null)
+    public function getData($path, array $define = [])
     {
         $url = $this->url . $path;
+        $query = array_merge(['sid' => $this->sid], $define);
         $params = [
-            'query' => [
-                'sid' => $this->sid,
-                $define,
-            ]
+            'query' => $query
         ];
         $resp = $this->getClient()->request('GET', $url, $params);
 
