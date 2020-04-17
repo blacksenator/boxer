@@ -89,7 +89,6 @@ function getCallList($config)
     $fritzbox->getClient();
     $callList = $fritzbox->getCallList();
 
-    // delete comments for debugging
     file_put_contents('callList.xml', $callList);
 }
 
@@ -177,14 +176,14 @@ function getMeshList($config)
 {
     $fritzbox = new hosts($config['url'], $config['user'], $config['password']);
     // delete comment to get the example of service list:
-     $services = $fritzbox->getServiceDescription();
-     $services->asXML('services.xml');
+    // $services = $fritzbox->getServiceDescription();
+    // $services->asXML('services.xml');
 
     $fritzbox->getClient();
-    $meshList = $fritzbox->getMeshListPath();
+    $meshList = $fritzbox->x_AVM_DE_GetMeshListPath();
 
     // delete comments for debugging
-    // $meshList->asXML('meshlist.xml');
+    $meshList->asXML('meshlist.xml');
 
     $nodeIntfs = $meshList->xpath("//node_interfaces/*[starts-with(local-name(), 'item')]");
     foreach ($nodeIntfs as $nodeIntf) {
